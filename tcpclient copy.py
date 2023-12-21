@@ -13,4 +13,3 @@ try:
         #print("recieved from server..<",x2.decode('ascii'))
 except SystemExit:
     socket_c.close()
-    
