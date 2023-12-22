@@ -18,3 +18,5 @@ for flight in flights:
         })
 with open('Group_GAFlight.json', 'w') as file:
         json.dump(selected_info, file,indent=4) 
+
+print("===")
