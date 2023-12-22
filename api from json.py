@@ -9,7 +9,7 @@ flights = json_res.get('data',[])
 
 selected_info = []
 for flight in flights:
-   if flight['flight']['iata'] =="jt894" :
+   if flight['flight']['iata'] =="PR3502" :
         selected_info.append({
             'IATA code': flight['flight']['iata'],
             'departure airport': flight['departure']['airport'],
