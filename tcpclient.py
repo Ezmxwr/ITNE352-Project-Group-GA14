@@ -12,4 +12,5 @@ try:
         #x2= socket_c.recv(2048)
         #print("recieved from server..<",x2.decode('ascii'))
 except SystemExit:
-    socket_c.close()
+    socket_c.close()#
+
