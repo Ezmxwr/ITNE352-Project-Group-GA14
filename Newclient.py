@@ -38,7 +38,37 @@ def communicate_for_option1():
 
 # Function to handle communication with the server for option 2
 def communicate_for_option2():
-    print("just fot testing option 2")
+    socket_c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    socket_c.connect(("127.0.0.1", 49993))
+    print("\nThe request for option 2 has been sent")
+    try:
+        # Send the selected option to the server
+        socket_c.send('2'.encode("ascii"))
+
+        # Receive the response from the server
+        response_data = socket_c.recv(2048).decode('ascii')
+        print("Received from server: {}".format(response_data))
+
+        # Update the text label with the server response
+        response_text.config(state=NORMAL) #The state option => the widget becomes editable, meaning you can insert or delete text
+        response_text.delete('1.0', END)# to clears the widget after each chose
+        response_text.insert(END, "Server Response for Option 2:\n")
+        # Parse and display the information in a structured way
+        try:
+            response_list = eval(response_data) 
+            for item in response_list:
+                response_text.insert(END, "\n===\n")
+                for key, value in item.items():
+                    response_text.insert(END, "{}: {}\n".format(key, value))
+        except Exception as e: 
+            response_text.insert(END, "Error parsing server response: {}\n".format(e)) #Error Handling
+        
+        response_text.config(state=DISABLED)
+
+    except SystemExit:
+        socket_c.close()
+
+
 
 # Create the main window
 root = Tk()
