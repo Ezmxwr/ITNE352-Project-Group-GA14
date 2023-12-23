@@ -16,7 +16,29 @@ except SystemExit:
  """
 import socket
 import threading
+import requests
+import json
+def response():
+    print("Client request these data")
+    with open('Group_GA14.json','r') as ofile:
+      json_res=json.load(ofile)
 
+    flights = json_res.get('data',[])
+
+
+    selected_info = []
+    for flight in flights:
+      if flight['flight']['iata'] =="PR3502" :
+            selected_info.append({
+                'IATA code': flight['flight']['iata'],
+                'departure airport': flight['departure']['airport'],
+                'original departure time': flight['departure']['scheduled'],
+                'status': flight['flight_status']
+            })
+    
+    return json.dumps(selected_info,indent=4) 
+
+    print("===")
 def handle_client(client_socket, client_address):
     print('\nAccepted request from', client_address[0], 'with port number', client_address[1])
     
@@ -24,9 +46,11 @@ def handle_client(client_socket, client_address):
         data = client_socket.recv(5000)
         if not data:
             break  # client disconnected
+        if data.decode('ascii')=='1':
+            response()
         print("Client sent:", data.decode('ascii'))
-        """ response = input("Send to client: ")
-        client_socket.send(response.encode('ascii')) """
+        response_data =response() 
+        client_socket.send(response_data.encode('ascii')) 
     
     print('Connection with', client_address, 'closed.')
     client_socket.close()
