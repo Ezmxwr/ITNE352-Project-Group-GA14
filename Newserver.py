@@ -61,6 +61,7 @@ def handle_client(client_socket, client_address):
         data = client_socket.recv(5000)
         if not data:
             break  # client disconnected
+        
 
         option = data.decode('ascii')
         print("Client sent option:", option)
