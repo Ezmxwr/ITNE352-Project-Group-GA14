@@ -1,7 +1,7 @@
 
 import socket
 from tkinter import *
-from tkinter import ttk
+from tkinter import ttk ,simpledialog #simpledialog modules handles dialog boxes
 from threading import Thread
 
 # Global variables
@@ -36,12 +36,23 @@ def receive_data_from_server(option):
             print("Error receiving data from the server:", e)
             break
 
-def communicate_with_server(option):
+
+def communicate_with_server(option , user_input= None):
     global socket_c, response_data
     response_data = ""
     try:
         # Send the selected option to the server
         socket_c.send(option.encode("ascii"))
+
+        if option == '3':
+            # For option 3, tell the user to enter a city name
+            user_input = simpledialog.askstring("Enter City", "Please enter the city name:") 
+        elif option == '4':
+            # For option 4,tell the user to enter a flight number
+            user_input = simpledialog.askstring("Enter Flight Number", "Please enter the flight number:")
+        
+        # to isplay the user input in a label
+        user_input_label.config(text="User Input: {}".format(user_input))
 
         # Start a thread to continuously receive data from the server
         receive_thread = Thread(target=receive_data_from_server, args=(option,), daemon=True)
@@ -65,6 +76,9 @@ option4 = ttk.Button(root, text='Details of a particular flight', width=30,comma
 option4.pack(side=TOP, pady=5)
 option5 = ttk.Button(root, text='Quit', style='B5.TButton', command=root.destroy)
 option5.pack(side='top', anchor=SE, padx=10, pady=10)
+# Add a label to display the entered input
+user_input_label = Label(root, text="", font=('Helvetica', 12))
+user_input_label.pack(side=TOP, pady=5)
 organiRight = Label(root,width=3, text='',state=DISABLED)
 organiRight.pack(side='right')
 organiLeft = Label(root,width=3, text='',state=DISABLED)
@@ -78,6 +92,7 @@ scrollbar = Scrollbar(response_frame, command=response_text.yview)
 scrollbar.pack(side=RIGHT, fill=Y)
 response_text.config(yscrollcommand=scrollbar.set)
 response_text.config(state=DISABLED)
+
 style = ttk.Style()
 style.theme_use('classic')
 style.configure('TButton', background='lightgray', font=('Helvetica', 10))
