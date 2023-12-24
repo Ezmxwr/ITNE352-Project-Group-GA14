@@ -4,7 +4,7 @@ import json
 
 params = {
   'access_key': 'fcd54fda53bc3908921d2821cca1cbb7',
-  'flight_iata': 'mh1037',
+  'dep_iata':'HKG',
   'limit':100
   # Arrival airport ICAO code for Bahrain International Airport 
 }
@@ -30,7 +30,7 @@ for flight in flights:
             'original departure time': flight['departure']['scheduled'],
             'status': flight['flight_status']
         })
-with open('Group_GAFlight.json', 'w') as file:
+with open('G_GAFlights.json', 'w') as file:
         json.dump(selected_info, file,indent=4) 
 
 
