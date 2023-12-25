@@ -28,14 +28,14 @@ def response(selected_option):
                 'Departure Airport': flight['departure']['airport'],
                 'Departure Time': flight['departure']['scheduled'],
                 'Estimated Arrival Time': flight['arrival']['estimated'],
-                'Delay': flight['arrival']['delay'],
+                'Delay': flight['arrival']['delay'], #chake it if its aerival or Departure!!!!
                 'Terminal': flight['arrival']['terminal'],
                 'Gate': flight['arrival']['gate'],
                 'Status': flight['flight_status']
             }) 
    
     print("===")
-    return json.dumps(selected_info, indent=4)
+    return json.dumps(selected_info, indent=4) 
     
    
 
