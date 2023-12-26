@@ -1,12 +1,9 @@
-
 import socket
 from tkinter import *
-from tkinter import ttk ,simpledialog #simpledialog modules handles dialog boxes
+from tkinter import ttk, simpledialog, messagebox
 from threading import Thread
 
-# Global variables
-response_data = ""
-socket_c = None
+socket_c = None # is it important or we can delete it????
 
 def receive_data_from_server(option):
     global response_data
@@ -16,43 +13,61 @@ def receive_data_from_server(option):
             if not chunk:
                 break
             response_data += chunk
-    
+
             # Update the text label with the server response
             response_text.config(state=NORMAL)
             response_text.delete('1.0', END)
             response_text.insert(END, "Server Response for Option {}:\n".format(option))
             try:
-                response_list = eval(response_data.replace('null', 'None')) 
+                response_list = eval(response_data.replace('null', 'None'))
                 for item in response_list:
                     response_text.insert(END, "\n===\n")
                     for key, value in item.items():
                         response_text.insert(END, "{}: {}\n".format(key, value))
             except Exception as e:
                 response_text.insert(END, "Error parsing server response: {}\n".format(e))
-            
+
             response_text.config(state=DISABLED)
 
         except Exception as e:
             print("Error receiving data from the server:", e)
-            break
+#-------------------------------------------------------------------------------------------------------------
+def show_options_after_username_entry(option):
+    # This function is called when the user clicks one of the option buttons after entering the username
+    username = username_entry.get()
 
+    if username:
+        # If the username is entered, show the options buttons and hide the username entry button
+        options_frame.pack(side=TOP, pady=10)
+        username_entry_button.pack_forget()
 
-def communicate_with_server(option , user_input= None):
+        # Send the username and option to the server
+        communicate_with_server(option, username)
+    else:
+        # If the username is not entered, show a message asking the user to enter the username
+        messagebox.showinfo("Username Required", "Please enter your username.")
+
+#-------------------------------------------------------------------------------------------------------
+def communicate_with_server(option, username):
     global socket_c, response_data
     response_data = ""
     try:
+        # Send the username to the server
+        socket_c.send(username.encode("ascii"))
+
         # Send the selected option to the server
         socket_c.send(option.encode("ascii"))
 
+        # If needed, prompt the user for additional input
         if option == '3':
-            # For option 3, tell the user to enter a city name
-            user_input = simpledialog.askstring("Enter City", "Please enter the city name:") 
+            user_input = simpledialog.askstring("Enter City", "Please enter the city name:")
         elif option == '4':
-            # For option 4,tell the user to enter a flight number
             user_input = simpledialog.askstring("Enter Flight Number", "Please enter the flight number:")
-        
-        # to isplay the user input in a label
-        user_input_label.config(text="User Input: {}".format(user_input))
+        else:
+            user_input = None
+
+        # Display the user input in a label
+        user_input_label.config(text="User Input: {}".format(user_input)) #i m thinking if should we delet it...
 
         # Start a thread to continuously receive data from the server
         receive_thread = Thread(target=receive_data_from_server, args=(option,), daemon=True)
@@ -60,48 +75,49 @@ def communicate_with_server(option , user_input= None):
 
     except Exception as e:
         print("Error communicating with the server:", e)
-
-# Create the main window
+#-------------------------------------------------------------------------------------------------------
+#u can controll the frame size here
 root = Tk()
 root.title("Flight Information Client")
-
-# Create Button widgets and associate them with corresponding functions
-option1 = ttk.Button(root, text='Arrived flights', width=30, command=lambda: communicate_with_server('1'))
+root.geometry("800x600")
+root.minsize(600, 500)
+# Create Label, Entry, and Button widgets for the username
+username_label = Label(root, text="Enter Username:")
+username_label.pack(side=TOP, pady=10)
+username_entry = Entry(root, width=30)
+username_entry.pack(side=TOP, pady=10)
+# Button to submit the username and show options
+username_entry_button = ttk.Button(root, text='Enter', width=30, command=lambda: show_options_after_username_entry('0'))
+username_entry_button.pack(side=TOP, pady=10)
+# Create Button widgets for options and associate them with corresponding functions
+options_frame = Frame(root)
+option1 = ttk.Button(options_frame, text='Arrived flights', width=30, command=lambda: show_options_after_username_entry('1'))
 option1.pack(side=TOP, pady=5)
-option2 = ttk.Button(root, text='Delayed flights', width=30, command=lambda: communicate_with_server('2'))
+option2 = ttk.Button(options_frame, text='Delayed flights', width=30, command=lambda: show_options_after_username_entry('2'))
 option2.pack(side=TOP, pady=5)
-option3 = ttk.Button(root, text='All flights from a specific city', width=30,command=lambda: communicate_with_server('3'))
+option3 = ttk.Button(options_frame, text='All flights from a specific city', width=30, command=lambda: show_options_after_username_entry('3'))
 option3.pack(side=TOP, pady=5)
-option4 = ttk.Button(root, text='Details of a particular flight', width=30,command=lambda: communicate_with_server('4'))
+option4 = ttk.Button(options_frame, text='Details of a particular flight', width=30, command=lambda: show_options_after_username_entry('4'))
 option4.pack(side=TOP, pady=5)
-option5 = ttk.Button(root, text='Quit', style='B5.TButton', command=root.destroy)
-option5.pack(side='top', anchor=SE, padx=10, pady=10)
+option5 = ttk.Button(options_frame, text='Quit', style='B5.TButton', command=root.destroy)
+option5.pack(side=TOP, pady=5)
 # Add a label to display the entered input
 user_input_label = Label(root, text="", font=('Helvetica', 12))
-user_input_label.pack(side=TOP, pady=5)
-organiRight = Label(root,width=3, text='',state=DISABLED)
-organiRight.pack(side='right')
-organiLeft = Label(root,width=3, text='',state=DISABLED)
-organiLeft.pack(side='left')
-# Create a Text widget with scroller to display server responses
-response_frame = Frame(root)
-response_frame.pack(side=TOP, pady=10)
-response_text = Text(response_frame, wrap=WORD, width=90, height=30)
+user_input_label.pack(side=TOP, pady=10) # i think no need for it, what u think?
+
+#  Text widget with a scroller to display server responses
+response_text = Text(options_frame, wrap=WORD, width=60, height=50)
 response_text.pack(side=LEFT, pady=10)
-scrollbar = Scrollbar(response_frame, command=response_text.yview)
+scrollbar = Scrollbar(options_frame, command=response_text.yview)
 scrollbar.pack(side=RIGHT, fill=Y)
 response_text.config(yscrollcommand=scrollbar.set)
 response_text.config(state=DISABLED)
-
 style = ttk.Style()
 style.theme_use('classic')
 style.configure('TButton', background='lightgray', font=('Helvetica', 10))
 style.configure('B5.TButton', foreground='white', background='red', font=('Helvetica', 12, 'bold'))
 root.update()
-
-# Connect to the server
-socket_c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+socket_c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)# Connect to the server
 socket_c.connect(("127.0.0.1", 49993))
 
-# Start the Tkinter event loop
-root.mainloop()
+root.mainloop() # Start the Tkinter event loop
