@@ -51,15 +51,17 @@ def communicate_with_server(option , user_input= None):
         # Send the selected option to the server
         #socket_c.send(option.encode("ascii"))
 
-        if option=='1' or option== '2'or option =='5':
+        if option=='1' or option== '2':
             data_to_send = {'option': option, 'user_input': user_input}
             socket_c.send(json.dumps(data_to_send).encode("utf-8"))
-            if option=='5':
-                confirmation = messagebox.askyesno("Goodbye server", "Are you sure you want to close the client? (yes/no)")
-                if not confirmation:
-                     return 
-                else:
-                    root.destroy()
+            
+        if option=='5':
+            confirmation = messagebox.askyesno("Goodbye server", "Are you sure you want to close the client? (yes/no)")
+            if not confirmation:
+                return 
+            else:
+                root.destroy()
+                
                 
 
         if option == '3':
