@@ -117,6 +117,7 @@ style.theme_use('classic')
 style.configure('TButton', background='lightgray', font=('Helvetica', 10))
 style.configure('B5.TButton', foreground='white', background='red', font=('Helvetica', 12, 'bold'))
 root.update()
+
 socket_c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)# Connect to the server
 socket_c.connect(("127.0.0.1", 49993))
 
