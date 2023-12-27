@@ -1,4 +1,3 @@
-
 import socket
 import threading
 import requests
@@ -22,47 +21,42 @@ def response(selected_option):
                 'Arrival Terminal': flight['arrival']['terminal'],
                 'Arrival Gate': flight['arrival']['gate']
             })
-        elif selected_option == '2' : # there is NO 😜 issue here
+        elif selected_option == '2' : 
             selected_info.append({
                 'Flight Code (IATA)': flight['flight']['iata'],
                 'Departure Airport': flight['departure']['airport'],
                 'Departure Time': flight['departure']['scheduled'],
                 'Estimated Arrival Time': flight['arrival']['estimated'],
-                'Delay': flight['arrival']['delay'],
+                'Delay': flight['arrival']['delay'], 
                 'Terminal': flight['arrival']['terminal'],
                 'Gate': flight['arrival']['gate'],
                 'Status': flight['flight_status']
             }) 
    
     print("===")
-    return json.dumps(selected_info, indent=4)
+    return json.dumps(selected_info, indent=4) 
     
    
 
 
 def handle_client(client_socket, client_address):
-    print('\nAccepted request from', client_address[0], 'with port number', client_address[1])
-    user_name = client_socket.recv(1024).decode('ascii')
-    print("Client's Name:", user_name)
+
+    username = client_socket.recv(1024).decode('ascii')  # Receive and print the username
+    print('\nAccepted request from',username, 'with port number', client_address[1])
+    
+  
+   
     while True:
         data = client_socket.recv(8192)
         if not data:    
             break  # client disconnected
         
-
         option = data.decode('ascii')
+
         print("Client sent option:", option)
 
-        if option =='1':
-            response_data = response(option)  #call the def with the client option
-            #client_socket.send("whattttttttt".encode('ascii'))
-            for i in range(0, len(response_data), 1024):
-                chunk = response_data[i:i + 1024]
-                print("Sending response chunk to client:", chunk)
-                client_socket.send(chunk.encode('ascii'))
-        elif option == '2':
-            response_data = response(option)  #call the def with the client option
-            #client_socket.send("whattttttttt".encode('ascii'))
+        if option in('1','2'):
+            response_data = response(option)  # call the def with the client option
             for i in range(0, len(response_data), 1024):
                 chunk = response_data[i:i + 1024]
                 print("Sending response chunk to client:", chunk)
@@ -70,11 +64,6 @@ def handle_client(client_socket, client_address):
         elif option == '5':
             print("Closing connection with", client_address)
             break
-
-        
-        #response_data = response(option)
-        """ print("Sending response to client:", response_data)
-        client_socket.sendall(response_data.encode('ascii')) """
 
     print('Connection with', client_address, 'closed.')
     client_socket.close()
@@ -96,4 +85,5 @@ except KeyboardInterrupt:
 finally:
     sock_p.close()
 
-#zx
+
+#3z 
