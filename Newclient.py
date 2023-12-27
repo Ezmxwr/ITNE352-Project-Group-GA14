@@ -58,7 +58,6 @@ def communicate_with_server(option, username):
         # Send the selected option to the server
         socket_c.send(option.encode("ascii"))
 
-        # If needed, prompt the user for additional input
         if option == '3':
             user_input = simpledialog.askstring("Enter City", "Please enter the city name:")
         elif option == '4':
