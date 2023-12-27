@@ -4,19 +4,17 @@ from tkinter import ttk, simpledialog, messagebox
 from threading import Thread
 import json
 
-socket_c = None # is it important or we can delete it????
-response_data=""
-def receive_data_from_server(option):
+def receive_data_from_server():
     global response_data
     while True:
         try:
-            ms = socket_c.recv(20400).decode("utf-8")
-            print(ms)
+            Response= socket_c.recv(20400).decode("utf-8")
+            
     
             # Update the text label with the server response
             response_text.config(state=NORMAL)
             response_text.delete('1.0', END)
-            response_text.insert(END, ms )
+            response_text.insert(END, Response )
             response_text.config(state=DISABLED)
 
         except Exception as e:
@@ -38,12 +36,8 @@ def show_options_after_username_entry():
         # If the username is not entered, show a message asking the user to enter the username
         messagebox.showinfo("Username Required", "Please enter your username.")
 
-#-------------------------------------------------------------------------------------------------------
+
 def communicate_with_server(option , user_input= None):
-    global socket_c, response_data
-    response_data = ""
-    print(option) 
-    print(user_input)
     try:
         
         if option=="1" or option== "2":
@@ -55,6 +49,7 @@ def communicate_with_server(option , user_input= None):
             if not confirmation:
                 return 
             else:
+                print("\nconnection with server closed.\n")
                 root.destroy()
                 
                 
@@ -74,14 +69,14 @@ def communicate_with_server(option , user_input= None):
 
         # Start a thread to continuously receive data from the server
         #look the why file
-        receive_thread = Thread(target=receive_data_from_server, args=(option,), daemon=True)
+        receive_thread = Thread(target=receive_data_from_server, daemon=True)
         receive_thread.start()          
         
        
     except Exception as e:
         print("Error communicating with the server:", e)
-#-------------------------------------------------------------------------------------------------------
-#u can controll the frame size here
+
+# controlling the frame size here
 root = Tk()
 root.title("Flight Information Client")
 root.geometry("800x600")
