@@ -102,10 +102,9 @@ def response(selected_option,user_input):
     return selected_info
 
 def handle_client(client_socket, client_address):
-    print('\nAccepted request from', client_address[0], 'with port number', client_address[1])
-    """ user_name = client_socket.recv(1024).decode('ascii')
-    print("Client's Name:", user_name) """
-
+    username = client_socket.recv(1024).decode('ascii')  # Receive and print the username
+    print('\nAccepted request from',username, 'with port number', client_address[1])
+    
     try:
      while True:
         data = client_socket.recv(8192)
