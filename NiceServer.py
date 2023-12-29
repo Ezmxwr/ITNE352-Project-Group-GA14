@@ -29,7 +29,6 @@ def get_flights_from_api(arr_icao):
 
 
 def response(selected_option,user_input):
-    print("Client requested data for option:", selected_option)
 
     # Retrieve data once when the server starts
     with open('Group_GA14.json', 'r') as ofile:
@@ -39,21 +38,24 @@ def response(selected_option,user_input):
     for flight in flights:
         # Process flight data based on the selected option
         if selected_option == '1':
-          
-          if flight ['flight_status'] =='landed':
+            
+            if flight ['flight_status'] =='landed':
+                        
                         selected_info += f"***Here are your required information about arrived flights ✅***\n"
+                        selected_info += f"\n"
                         selected_info += f"Flight IATA code: {flight['flight']['iata']}\n"
                         selected_info += f"Departure Airport: {flight['departure']['airport']}\n"
                         selected_info += f"Arrival Time: {flight['arrival']['estimated']}\n"
                         selected_info += f"Arrival Terminal: {flight['arrival']['terminal']}\n"
                         selected_info+= f"Arrival Gate: {flight['arrival']['gate']}\n"
                         selected_info += "\n"
-                        selected_info += "┬┴┬┴┤├┬┴┬┴┬┴┬┴┤├┬┴┬┴┬┴┬┴┤├┬┴┬┴┬┴┬┴┤├┬┴┬┴"
-
+                        selected_info += "┬┴┬┴┤├┬┴┬┴┬┴┬┴┤├┬┴┬┴┬┴┬┴┤├┬┴┬┴┬┴┬┴┤├┬┴┬┴\n"
+            
             
         elif selected_option == '2':
           if flight['arrival']['delay'] != None:
                       selected_info += f"***Here are your required information about delayed flights ⏱️***\n"
+                      selected_info += f"\n"
                       selected_info += f"Flight IATA code: {flight['flight']['iata']}\n"
                       selected_info += f"Departure Airport: {flight['departure']['airport']}\n"
                       selected_info += f"Original departure Time: {flight['departure']['actual']}\n"
@@ -62,11 +64,12 @@ def response(selected_option,user_input):
                       selected_info += f"delay : {flight['departure']['delay']}\n"
                       selected_info += f"Arrival Gate: {flight['arrival']['gate']}\n"
                       selected_info += "\n"
-                      selected_info += "┬┴┬┴┤├┬┴┬┴┬┴┬┴┤├┬┴┬┴┬┴┬┴┤├┬┴┬┴┬┴┬┴┤├┬┴┬┴"
+                      selected_info += "┬┴┬┴┤├┬┴┬┴┬┴┬┴┤├┬┴┬┴┬┴┬┴┤├┬┴┬┴┬┴┬┴┤├┬┴┬┴\n"
 
         elif selected_option=='3':
             if flight['departure']['iata'] == user_input:
                         selected_info += f"***Required information about specific airport/city 👇***\n"
+                        selected_info += f"\n"
                         selected_info += f"Flight IATA code: {flight['flight']['iata']}\n"
                         selected_info += f"Departure Airport: {flight['departure']['airport']}\n"
                         selected_info += f"Original departure Time: {flight['departure']['actual']}\n"
@@ -75,12 +78,13 @@ def response(selected_option,user_input):
                         selected_info += f"Departure Gate: {flight['departure']['gate']}\n"
                         selected_info += f"flight_status: {flight['flight_status']}\n"
                         selected_info += "\n"
-                        selected_info += "┬┴┬┴┤├┬┴┬┴┬┴┬┴┤├┬┴┬┴┬┴┬┴┤├┬┴┬┴┬┴┬┴┤├┬┴┬┴"
+                        selected_info += "┬┴┬┴┤├┬┴┬┴┬┴┬┴┤├┬┴┬┴┬┴┬┴┤├┬┴┬┴┬┴┬┴┤├┬┴┬┴\n"
                 
         elif selected_option=='4':
             if flight['flight']['iata'] == user_input:    
                         
                         selected_info += f"***Here are your required information about this flight 📅***\n"
+                        selected_info += f"\n"
                         selected_info += f"Flight IATA code: {flight['flight']['iata']}\n"
                         selected_info += f"Departure Airport: {flight['departure']['airport']}\n"
                         selected_info += f"Departure Gate: {flight['departure']['gate']}\n"
@@ -91,19 +95,19 @@ def response(selected_option,user_input):
                         selected_info += f"flight_status: {flight['flight_status']}\n"
                         selected_info += f"schaduled Departure time: {flight['departure']['scheduled']}\n"
                         selected_info += f"scheduled arrival time: {flight['arrival']['scheduled']}\n"
-                        selected_info += "┬┴┬┴┤├┬┴┬┴┬┴┬┴┤├┬┴┬┴┬┴┬┴┤├┬┴┬┴┬┴┬┴┤├┬┴┬┴"
+                        selected_info += "=====================================\n"
                         
                     
 
 
        
 
-    print("===")
+    
     return selected_info
 
-def handle_client(client_socket, client_address):
+def handle_client(client_socket):
     username = client_socket.recv(1024).decode('ascii')  # Receive and print the username
-    print('\nAccepted request from',username, 'with port number', client_address[1])
+    print('\nAccepted request from',username)
     
     try:
      while True:
@@ -116,22 +120,26 @@ def handle_client(client_socket, client_address):
             option = received_data.get('option')
             user_input = received_data.get('user_input') 
         
-        print("Client sent option:", option)
         if option =='1' or option =='2' or option =='3' or option =='4':
+                if option=='1':
+                    print("Request from :",username,"\nType of Request: All arrived flights \n --------------")
+                if option == '2':
+                    print("Request from :",username,"\nType of Request: All delayed flights \n--------------")
+                if option == '3':
+                    print("Request from :",username,"\nType of Request: All flights from a specific city\n"," Depature IATA :",user_input,"\n--------------")
+                if option == '4':
+                    print("Request from :",username,"\nType of Request: Details of a particular flight\n", "Flight IATA :",user_input,"\n--------------")
                 # Get response data based on the selected option and arr_icao
                 response_data = response(str(option),user_input)
-                print(response_data)
+                """ print(response_data) """
                 client_socket.sendall(response_data.encode('utf-8')) # new
                  
         if option == '5':   
-            print("Closing connection with", client_address)
+            print("Closing connection with", username,"....⏱️")
             break
 
-    except Exception as e:
-        print("Error handling client:", e)
-
-    finally:
-        print('Connection with', client_address, 'closed.')
+    except Exception:
+        print('Connection with', username, 'closed.')
         client_socket.close()
      
 
