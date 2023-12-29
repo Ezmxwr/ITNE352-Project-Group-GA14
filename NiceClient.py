@@ -4,7 +4,7 @@ from tkinter import ttk, simpledialog, messagebox
 from threading import Thread
 import json
 
-socket_c = None # is it important or we can delete it????
+socket_c = None 
 response_data=""
 def receive_data_from_server(option):
     global response_data
@@ -61,7 +61,7 @@ def communicate_with_server(option , user_input= None):
 
         if option == "3":
             # For option 3, tell the user to enter a depature ICAO code
-            user_input = simpledialog.askstring( "Enter Depature IATA code","Please enter the departure IATA      :") 
+            user_input = simpledialog.askstring( "Enter Departure IATA code","Please enter the departure IATA      :") 
             data_to_send = {"option": option, "user_input": user_input}
             socket_c.send(json.dumps(data_to_send).encode("utf-8"))
 
@@ -73,7 +73,6 @@ def communicate_with_server(option , user_input= None):
       
 
         # Start a thread to continuously receive data from the server
-        #look the why file
         receive_thread = Thread(target=receive_data_from_server, args=(option,), daemon=True)
         receive_thread.start()          
         
