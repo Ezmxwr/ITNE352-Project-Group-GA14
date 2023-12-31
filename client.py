@@ -1,3 +1,6 @@
+
+
+
 import socket
 import sys
 from tkinter import *
@@ -67,14 +70,7 @@ def communicate_with_server(option, user_input=None):
             data_to_send = {"option": option, "user_input": user_input}
             socket_client.send(json.dumps(data_to_send).encode("utf-8"))
 
-        if option == "5":
-            # Confirm with the user before closing the client
-            confirmation = messagebox.askyesno("Goodbye server", "Are you sure you want to close the client? (yes/no)")
-            if not confirmation:
-                return
-            else:
-                print("\nConnection with server closed.\n")
-                root.destroy()
+       
 
         if option == "3":
             # For option 3, ask the user to enter a departure ICAO code
@@ -88,6 +84,15 @@ def communicate_with_server(option, user_input=None):
             data_to_send = {"option": option, "user_input": user_input}
             socket_client.send(json.dumps(data_to_send).encode("utf-8"))
 
+        if option == "5":
+                    # Confirm with the user before closing the client
+                    confirmation = messagebox.askyesno("Goodbye server", "Are you sure you want to close the client? (yes/no)")
+                    if not confirmation:
+                        return
+                    else:
+                        print("\nConnection with server closed.\n")
+                        root.destroy()
+
         # Start a thread to continuously receive data from the server
         receive_thread = Thread(target=receive_data_from_server, daemon=True)
         receive_thread.start()
@@ -100,7 +105,8 @@ def communicate_with_server(option, user_input=None):
     except Exception as e:
         print("Error communicating with the server:", e)
         messagebox.showerror("Communication Error", "An error occurred while communicating with the server.")
-        sys.exit()
+        socket_client.close()
+        #sys.exit()
 
 # Create the main Tkinter window
 root = Tk()
