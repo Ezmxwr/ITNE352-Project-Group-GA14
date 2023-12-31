@@ -30,7 +30,7 @@ def show_options_after_username_entry():
         options_frame.pack(side=TOP, pady=10)
         username_entry_button.pack_forget()
 
-        # Send the username and option to the server
+        # Send the username to the server
         socket_c.sendall(username.encode("utf-8"))
     else:
         # If the username is not entered, show a message asking the user to enter the username
@@ -55,8 +55,8 @@ def communicate_with_server(option , user_input= None):
                 
 
         if option == "3":
-            # For option 3, tell the user to enter a depature ICAO code
-            user_input = simpledialog.askstring( "Enter Depature IATA code","Please enter the departure IATA      :") 
+            # For option 3, tell the user to enter a departure ICAO code
+            user_input = simpledialog.askstring( "Enter Departure IATA code","Please enter the departure IATA      :") 
             data_to_send = {"option": option, "user_input": user_input}
             socket_c.send(json.dumps(data_to_send).encode("utf-8"))
 
