@@ -1,3 +1,4 @@
+
 import socket
 import threading
 import requests
@@ -101,10 +102,12 @@ def response(selected_option, user_input):
 
 # Function to handle a client's request
 def handle_client(client_socket):
-    username = client_socket.recv(1024).decode('ascii')  # Receive and print the username
-    print('\nAccepted request from', username)
-    
+
+    username = None
+
     try:
+        username = client_socket.recv(1024).decode('ascii')  # Receive and print the username
+        print('\nAccepted request from', username)
         while True:
             data = client_socket.recv(8192)
             if not data:    
@@ -133,15 +136,21 @@ def handle_client(client_socket):
                 print("Closing connection with", username, "....⏱️")
                 break
 
-    except Exception:
-        print('Connection with', username, 'closed.')
+    except ConnectionResetError:
+        print('Connection with', username, 'closed .') 
+    except Exception as e:
+        print('An error occurred:', e)
+    finally:
+        if username is not None:
+            print("connection with", username ,"closed .")
         client_socket.close()
+
 
 # Set up the server socket
 sock_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock_server.bind(("127.0.0.1", 49993))
 sock_server.listen(5)
-arr_icao = input("Enter the departure airport code (arr_icao): ")
+arr_icao = input("Enter the arrival airport code (arr_icao): ")
 get_flights_from_api(arr_icao)
 
 try:
